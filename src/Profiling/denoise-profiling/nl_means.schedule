@@ -1,0 +1,119 @@
+// Target: x86-64-linux-avx-sse41
+// MachineParams: 32,16384,40
+
+// Delete this line if not using Generator
+Pipeline pipeline = get_pipeline();
+
+Var _0_vi("_0_vi");
+Var _0_vo("_0_vo");
+Var x_i("x_i");
+Var x_i_vi("x_i_vi");
+Var x_i_vo("x_i_vo");
+Var x_o("x_o");
+Var x_vi("x_vi");
+Var x_vo("x_vo");
+
+Func clamped_with_alpha = pipeline.get_func(3);
+Func non_local_means = pipeline.get_func(13);
+Func non_local_means_sum = pipeline.get_func(12);
+Func repeat_edge = pipeline.get_func(2);
+Func sum = pipeline.get_func(5);
+Func sum_1 = pipeline.get_func(7);
+Func sum_2 = pipeline.get_func(9);
+
+{
+    Var x = clamped_with_alpha.args()[0];
+    Var y = clamped_with_alpha.args()[1];
+    Var c = clamped_with_alpha.args()[2];
+    clamped_with_alpha
+        .compute_at(non_local_means, x_o)
+        .reorder(x, c, y)
+        .split(x, x_vo, x_vi, 8)
+        .vectorize(x_vi);
+}
+{
+    Var x = non_local_means.args()[0];
+    Var y = non_local_means.args()[1];
+    Var c = non_local_means.args()[2];
+    non_local_means
+        .compute_root()
+        .split(x, x_o, x_i, 64)
+        .reorder(x_i, c, x_o, y)
+        .split(x_i, x_i_vo, x_i_vi, 8)
+        .vectorize(x_i_vi)
+        .parallel(y);
+}
+{
+    Var x = non_local_means_sum.args()[0];
+    RVar s_dom$x(non_local_means_sum.update(0).get_schedule().rvars()[0].var);
+    RVar s_dom$y(non_local_means_sum.update(0).get_schedule().rvars()[1].var);
+    non_local_means_sum
+        .compute_at(non_local_means, x_o)
+        .split(x, x_vo, x_vi, 8)
+        .vectorize(x_vi);
+    non_local_means_sum.update(0)
+        .reorder(x, c, y, s_dom$x, s_dom$y)
+        .split(x, x_vo, x_vi, 8, TailStrategy::GuardWithIf)
+        .vectorize(x_vi);
+}
+{
+    Var _0 = repeat_edge.args()[0];
+    Var _1 = repeat_edge.args()[1];
+    Var _2 = repeat_edge.args()[2];
+    repeat_edge
+        .compute_root()
+        .split(_0, _0_vo, _0_vi, 8)
+        .vectorize(_0_vi)
+        .parallel(_2)
+        .parallel(_1);
+}
+{
+    Var x = sum.args()[0];
+    Var dx = sum.args()[2];
+    Var dy = sum.args()[3];
+    RVar channels$x(sum.update(0).get_schedule().rvars()[0].var);
+    sum
+        .compute_root()
+        .split(x, x_vo, x_vi, 8)
+        .vectorize(x_vi)
+        .parallel(dy)
+        .parallel(dx);
+    sum.update(0)
+        .reorder(x, y, dx, channels$x, dy)
+        .split(x, x_vo, x_vi, 8, TailStrategy::GuardWithIf)
+        .vectorize(x_vi)
+        .parallel(dy)
+        .reorder(channels$x, dx)
+        .parallel(dx);
+}
+{
+    Var x = sum_1.args()[0];
+    RVar patch_dom$x(sum_1.update(0).get_schedule().rvars()[0].var);
+    sum_1
+        .compute_at(sum_2, x_o)
+        .split(x, x_vo, x_vi, 8)
+        .vectorize(x_vi);
+    sum_1.update(0)
+        .reorder(x, patch_dom$x, y, dx, dy)
+        .split(x, x_vo, x_vi, 8, TailStrategy::GuardWithIf)
+        .vectorize(x_vi);
+}
+{
+    Var x = sum_2.args()[0];
+    Var dx = sum_2.args()[2];
+    Var dy = sum_2.args()[3];
+    sum_2
+        .compute_root()
+        .split(x, x_vo, x_vi, 8)
+        .vectorize(x_vi)
+        .parallel(dy)
+        .parallel(dx);
+    sum_2.update(0)
+        .split(x, x_o, x_i, 64, TailStrategy::GuardWithIf)
+        .reorder(patch_dom$x, x_i, x_o, y, dx, dy)
+        .split(x_i, x_i_vo, x_i_vi, 8, TailStrategy::GuardWithIf)
+        .vectorize(x_i_vi)
+        .parallel(dy)
+        .parallel(dx);
+}
+

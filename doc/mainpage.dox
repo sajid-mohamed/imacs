@@ -1,0 +1,50 @@
+/**
+@mainpage IMACS
+
+IMACS is a framework for performance evaluation of IMAge in the Closed-loop System.
+![IMACS overview](doc/images/IMACS.JPG)
+
+For more details and latest information: http://www.es.ele.tue.nl/ecs/imacs
+
+We illustrate the applicability of IMACS using a lane keeping assist system (LKAS) example as shown below.
+![LKAS](doc/images/lkas.jpg)
+
+The camera captures images at a fixed frame rate and is fed to the Sensing and Processing task.
+Typically, cameras have an image signal processing stage where the RAW image is converted to compressed image.
+The compressed image is then used for perception.
+For LKAS, the perception stage involves lane detection and lateral deviation computation.
+The lateral deviation is the deviation of the car from the centre of the lane.
+![Sensing and Processing task](doc/images/isp_pr.jpg).
+
+A controller then computes the steering angle to be applied on the car so that the car stays on the centre of the lane.
+In the example, we consider a SISO system where the input is the steering angle and the output is the actual lateral deviation.
+The lateral deviation at the look-ahead distance is computed by the Sensing and Processing task. 
+This lateral deviation is a system state. Other system states are estimated by a simple estimator.
+The actuation task actuates the computed steering angle such that the sensor-to-actuator delay is kept constant (as per the control design).
+If your control design allows for variable delay, you could implement that as well.
+
+Note that we enforce a synchronous simulation. Synchronous simulation means that we can time-trigger tasks.
+It is necessary for the time triggering to emulate the actual scenario.
+
+Contact: Sajid Mohamed (s.mohamed@tue.nl), Sayandip De(sayandip.de@tue.nl), Dip Goswami (d.goswami@tue.nl)
+
+<!-- 
+@section imacs IMACS
+
+@section imacsVREP IMACS VREP Simulator
+
+@section imacsWEBOTS IMACS WEBOTS Simulator
+
+
+If you know plantUML and you have it installed (maybe adapt PLANTUML_JAR_PATH
+  in Doxyfile if it's not at `/usr/share/plantuml`) then you can use this:
+  @startuml
+  A -> B
+  @enduml
+
+  Otherwise you can include an image with this line:
+
+  ![Some image](doc/a.png)
+-->
+
+*/
