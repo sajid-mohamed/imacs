@@ -4,7 +4,7 @@ If you are using this simulator in any form in your work, please cite:
 ```
 Sajid Mohamed, Sayandip De, Konstantinos Bimpisidis, Vishak Nathan, Dip Goswami, Henk Corporaal, and Twan Basten, "IMACS: a framework for performance evaluation of image approximation in a closed-loop system," In 8th Mediterranean Conference on Embedded Computing (MECO), 2019.
 ```
-More details regarding the IMACS framework can be found [here](www.es.ele.tue.nl/ecs/imacs).
+More details regarding the IMACS framework can be found [here](https://www.es.ele.tue.nl/ecs/imacs).
 
 ## Installing IMACS
 Tested with the following versions:
