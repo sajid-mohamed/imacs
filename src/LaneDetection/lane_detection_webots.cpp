@@ -117,7 +117,9 @@ vector<vector<Point2f>> laneDetectionWEBOTS::get_bev_points(int world_encode){
 	if (world_encode == 4) { /// city_straight_dawn
 		x1 = 60; y1 = 512; x2 = 300; y2 = 512; x3 = 160; y3 = 447; x4 = 280; y4 = 447;
 	}
-	x1d = 50 + warp_offset; y1d = 512; x2d = 462 - warp_offset; y2d = 512; x3d = 50 + warp_offset; y3d = 0; x4d = 462 - warp_offset; y4d = 0;																			  
+	/// Choose the Region-of-Interest bounding box
+	//x1d = 50 + warp_offset; y1d = 512; x2d = 462 - warp_offset; y2d = 512; x3d = 50 + warp_offset; y3d = 0; x4d = 462 - warp_offset; y4d = 0;																			  
+	x1d = 0 + warp_offset; y1d = 512; x2d = 412 - warp_offset; y2d = 512; x3d = 0 + warp_offset; y3d = 0; x4d = 412 - warp_offset; y4d = 0;
 	/// assign src points
 	src_vertices[1] = Point(x3, y3); // 204, 447
 	src_vertices[0] = Point(x4, y4); // 280, 447 230
