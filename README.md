@@ -125,7 +125,15 @@ Generally for local tar file:
 ```
 tar -xvf FILENAME -C FOLDER --strip-components=1
 ```
-### 6. Edit IMACS paths
+### 6. Install Webots
+You can install webots using snap.
+```
+sudo apt install snap
+sudo snap install webots
+```
+Webots is installed in `/snap/webots/current`.
+
+### 7. Edit IMACS paths
 Please change paths relative to your own system in the following files
 ```
 $(IMACSROOT)/src/paths.hpp
@@ -140,6 +148,9 @@ To start IMACS
 bash imacs.sh
 ```
 Follow the instructions.
+
+To speed-up simulation time in webots, you can disable rendering.
+In the Webots window, go to the View dropdown menu, and uncheck Rendering (or just use Ctrl+4).
 
 ## How to use IMACS? Validating your controller design
 1. The controller needs to be designed separately from this toolchain.  
@@ -198,6 +209,12 @@ source ~/.bash_profile
 ```
 Save and close the file.
 Now, the paths should be exported everytime you open a terminal.
+
+## FAQ 2. Speed-up Webots simulation
+Disable 3D Rendering.
+* In the Webots window, go to the View dropdown menu, and uncheck Rendering (or just use Ctrl+4).
+Increase basicTimeStep.
+* Open in a text editor `~/imacs/webots_scenes/*.wbt`. Change "basicTimeStep" to GCF(period, delay) in ms.
 
 # Contact
 [Sajid Mohamed](mailto:s.mohamed@tue.nl)
