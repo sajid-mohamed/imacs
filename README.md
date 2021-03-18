@@ -211,9 +211,8 @@ Save and close the file.
 Now, the paths should be exported everytime you open a terminal.
 
 ## FAQ 2. Speed-up Webots simulation
-Disable 3D Rendering.
+Disable 3D Rendering and increase `basicTimeStep` when possible.
 * In the Webots window, go to the View dropdown menu, and uncheck Rendering (or just use Ctrl+4).
-Increase basicTimeStep.
 * Open in a text editor `~/imacs/webots_scenes/*.wbt`. Change "basicTimeStep" to GCF(period, delay) in ms.
 
 # Contact
